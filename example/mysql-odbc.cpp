@@ -1,4 +1,12 @@
 /*
+ * mysql-odbc.cpp
+ *
+ *  Created on: 2017年9月16日
+ *      Author: cplusplus
+ */
+
+
+/*
  * main.cpp
  *
  *  Created on: 2017年9月4日
@@ -54,6 +62,8 @@ int main(int argc , char* argv[]){
 	 db.logoff(); // disconnect from ODBC
 	return 0;
 }
+
+
 
 
 
