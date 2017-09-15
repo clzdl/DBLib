@@ -14,6 +14,7 @@
 #include "otl/otlv4config.h"
 namespace DBLIB{
 
+const int DEFAULT_BUFF_SIZE = 20;
 typedef   std::vector<_ROW>  _ROW_VEC ;
 
 class Executor
@@ -25,9 +26,9 @@ public:
 	/**
 	 * 需要后续释放内存
 	 */
-	otl_stream* Query(std::string sql , int buffSize = 1);
+	otl_stream* Query(std::string sql , int buffSize = DEFAULT_BUFF_SIZE);
 
-	_DBERROR FetchData(otl_stream* stmt , _ROW_VEC result , int buffSize = 1);
+	_DBERROR FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
 
 private:
 	Executor(const Executor *exec);

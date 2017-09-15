@@ -43,6 +43,15 @@ _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbField *field)
 _DBERROR AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbField *field)
 {
 	field->iType = FIELD_INT;
+	stmt>>field->fieldValue.iValue;
+	if(stmt.is_null())
+		field->fieldValue.iValue = 0;
+	return E_OK;
+}
+
+_DBERROR AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbField *field)
+{
+	field->iType = FIELD_LONG;
 	stmt>>field->fieldValue.lValue;
 	if(stmt.is_null())
 		field->fieldValue.lValue = 0;
@@ -76,7 +85,7 @@ std::map<int,AssFieldFunc> assFieldRel = {
 		{otl_var_int,AssField4Int},
 		{otl_var_unsigned_int,AssField4Int},
 		{otl_var_short,AssField4Int},
-		{otl_var_long_int,AssField4Int},
+		{otl_var_long_int,AssField4Long},
 		{otl_var_timestamp,AssField4Timestamp}
 };
 
@@ -94,20 +103,16 @@ Executor::~Executor()
 otl_stream* Executor::Query(std::string sql  , int buffSize )
 {
 	otl_stream *stmtPtr = new otl_stream();
-
 	stmtPtr->open(buffSize , sql.c_str() , *m_conn);
-
 	return stmtPtr;
 }
 
-_DBERROR Executor::FetchData(otl_stream* stmt , _ROW_VEC result , int buffSize )
+_DBERROR Executor::FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize )
 {
 	otl_column_desc* desc;
 	int desc_len=0;
 	_ROW record;
-
 	desc=stmt->describe_select(desc_len);
-
 	while(!stmt->eof() && ( 0 < buffSize--) ) // while not end-of-data
 	{
 		DbField *dbField = new DbField();
