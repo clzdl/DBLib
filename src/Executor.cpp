@@ -112,6 +112,7 @@ _DBERROR Executor::FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize 
 	otl_column_desc* desc;
 	int desc_len=0;
 	_ROW record;
+
 	desc=stmt->describe_select(desc_len);
 	while(!stmt->eof() && ( 0 < buffSize--) ) // while not end-of-data
 	{

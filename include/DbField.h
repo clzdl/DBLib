@@ -37,6 +37,8 @@ public:
 	DbField();
 	DbField(_FIELD_TYPE type);
 	~DbField();
+	DbField(const DbField &field);
+	DbField& operator = (const DbField &field);
 
 	_FIELD_TYPE iType;
 	_FieldValue fieldValue;

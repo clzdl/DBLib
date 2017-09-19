@@ -24,15 +24,21 @@ int main(int argc , char* argv[]){
 	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
 	otl_connect *conn = DBLIB::ConnectionPool::GetInstance()->GetConnection();
 	DBLIB::Executor executor(conn);
-	otl_stream *stmt = executor.Query("select password from f_user");
+	otl_stream *stmt = executor.Query("select password from f_user where password is not null");
 	DBLIB::_ROW_VEC rowVec;
-	executor.FetchData(stmt ,rowVec);
-
-	for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
+	for(;;)
 	{
-		fprintf(stdout , "===%s\n" , it->at(0)->fieldValue.strValue);
-	}
+		executor.FetchData(stmt ,rowVec);
+		if(rowVec.empty())
+			break;
+		for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
+		{
+			fprintf(stdout , "===%s\n" , it->at(0)->fieldValue.strValue);
+		}
 
+		rowVec.clear();
+	}
+	fprintf(stdout,"run over.\n");
 	return 0;
 }
 
