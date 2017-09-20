@@ -16,28 +16,34 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include <unistd.h>
+#include <memory>
 
 #include "pool/ConnectionPool.h"
 #include "Executor.h"
+
 
 int main(int argc , char* argv[]){
 	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
 	otl_connect *conn = DBLIB::ConnectionPool::GetInstance()->GetConnection();
 	DBLIB::Executor executor(conn);
-	otl_stream *stmt = executor.Query("select password from f_user where password is not null");
-	DBLIB::_ROW_VEC rowVec;
-	for(;;)
-	{
-		executor.FetchData(stmt ,rowVec);
-		if(rowVec.empty())
-			break;
-		for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
-		{
-			fprintf(stdout , "===%s\n" , it->at(0)->fieldValue.strValue);
-		}
 
-		rowVec.clear();
-	}
+	do{
+		std::auto_ptr<otl_stream> stmtPtr(executor.Query("select password from f_user"));
+		DBLIB::_ROW_VEC rowVec;
+		for(;;)
+		{
+			executor.FetchData(stmtPtr.get() ,rowVec);
+			if(rowVec.empty())
+				break;
+			for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
+			{
+				fprintf(stdout , "===%s\n" , it->at(0)->fieldValue.strValue);
+			}
+
+			rowVec.clear();
+			usleep(100);
+		}
+	}while(1);
 	fprintf(stdout,"run over.\n");
 	return 0;
 }
