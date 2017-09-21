@@ -44,8 +44,10 @@ public:
 	_FieldValue fieldValue;
 };
 
-
-typedef   std::vector< std::shared_ptr<DbField> >  _ROW ;
+//提取结果集使用
+typedef std::vector< std::shared_ptr<DbField> >  _ROW ;
+//绑定参数使用
+typedef std::vector<DbField> _PARAM_VEC;
 
 }
 

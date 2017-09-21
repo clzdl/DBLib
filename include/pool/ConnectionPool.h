@@ -48,6 +48,7 @@ private:
 	static ConnectionPool *instance;
 	ConnectionFactory *m_connFactory;
 	unsigned int m_uCnt;       //最大连接数
+	unsigned int m_uUsedCnt;   ///已使用的连接数
 	std::vector<otl_connect*> m_pool;
 
 	pthread_mutex_t m_mutex;

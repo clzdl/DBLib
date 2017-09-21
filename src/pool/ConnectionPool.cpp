@@ -13,7 +13,9 @@ namespace DBLIB{
 ConnectionPool* ConnectionPool::instance = NULL;
 
 ConnectionPool::ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt)
-:m_connFactory(connFactory),m_uCnt(cnt)
+:m_connFactory(connFactory),
+ m_uCnt(cnt),
+ m_uUsedCnt(0)
 {
 }
 
@@ -45,8 +47,11 @@ ConnectionPool* ConnectionPool::GetInstance()
 otl_connect* ConnectionPool::GetConnection()
 {
 	pthread_mutex_lock(&m_mutex);
-	if(0 == m_pool.size()){
-		pthread_cond_wait(&m_cond,&m_mutex);
+	if(0 == m_pool.size() ){
+		if(m_uUsedCnt == m_uCnt)
+			pthread_cond_wait(&m_cond,&m_mutex);
+		else
+			m_pool.push_back(m_connFactory->create());  ///创建新连接
 	}
 	otl_connect *conn = NULL;
 	do{
@@ -59,6 +64,9 @@ otl_connect* ConnectionPool::GetConnection()
 		m_pool.pop_back();
 	}while(!conn || m_pool.empty());
 
+	if(NULL != conn)
+		++m_uUsedCnt;
+
 	pthread_mutex_unlock(&m_mutex);
 	return conn;
 }
@@ -67,6 +75,7 @@ void ConnectionPool::Release(otl_connect *conn)
 {
 	pthread_mutex_lock(&m_mutex);
 	m_pool.push_back(conn);
+	--m_uUsedCnt;
 	pthread_cond_signal(&m_cond);
 	pthread_mutex_unlock(&m_mutex);
 }
@@ -75,7 +84,7 @@ void ConnectionPool::Initialize()
 {
 	pthread_mutex_init(&m_mutex, NULL);
 	pthread_cond_init(&m_cond , NULL);
-	for(int i = 0; i< m_uCnt ; ++i ){
+	for(unsigned int i = 0; i< 1 ; ++i ){
 		m_pool.push_back(m_connFactory->create());
 	}
 }

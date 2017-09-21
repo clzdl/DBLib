@@ -28,7 +28,7 @@ int main(int argc , char* argv[]){
 	DBLIB::Executor executor(conn);
 
 	do{
-		std::auto_ptr<otl_stream> stmtPtr(executor.Query("select password from f_user"));
+		std::shared_ptr<otl_stream> stmtPtr(executor.Query("select password from f_user"));
 		DBLIB::_ROW_VEC rowVec;
 		for(;;)
 		{

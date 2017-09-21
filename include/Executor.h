@@ -28,7 +28,26 @@ public:
 	 */
 	otl_stream* Query(std::string sql , int buffSize = DEFAULT_BUFF_SIZE);
 
+	/**
+	 * 执行更新数据的sql
+	 */
+	otl_stream* Execute(std::string sql  , int buffSize = 1 );
+
+	/**
+	 * 提取数据
+	 */
 	_DBERROR FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+
+	/**
+	 * 绑定参数
+	 */
+	void BindParam(otl_stream *otl_stmt , _PARAM_VEC &paramVec , bool bAutoFlush = true);
+
+	/**
+	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行
+	 * errVec 接受出错行的行号
+	 */
+	void BatBindParam(otl_stream *otl_stmt , std::vector<_PARAM_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL);
 
 private:
 	Executor(const Executor *exec);
