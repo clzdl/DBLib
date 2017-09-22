@@ -1,4 +1,5 @@
 # DBLib
+	依赖C++11支持
 
 mysql  odbc 编译运行方式
    1. 安装unixODBC    

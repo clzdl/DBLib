@@ -6,11 +6,20 @@
  */
 
 #include "stdio.h"
+#include <unistd.h>
 #include "pool/ConnectionPool.h"
 
 namespace DBLIB{
 
 ConnectionPool* ConnectionPool::instance = NULL;
+
+static void RemoveConnection(otl_connect *conn)
+{
+	conn->rollback();
+	conn->logoff();
+	delete conn;
+	conn = NULL;
+}
 
 ConnectionPool::ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt)
 :m_connFactory(connFactory),
@@ -21,8 +30,6 @@ ConnectionPool::ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt)
 
 ConnectionPool::~ConnectionPool()
 {
-	pthread_mutex_destroy(&m_mutex);
-	pthread_cond_destroy(&m_cond);
 }
 
 void ConnectionPool::Initialize(ConnectionFactory *connFactory , unsigned int maxSize)
@@ -46,44 +53,43 @@ ConnectionPool* ConnectionPool::GetInstance()
 
 otl_connect* ConnectionPool::GetConnection()
 {
-	pthread_mutex_lock(&m_mutex);
-	if(0 == m_pool.size() ){
-		if(m_uUsedCnt == m_uCnt)
-			pthread_cond_wait(&m_cond,&m_mutex);
-		else
-			m_pool.push_back(m_connFactory->create());  ///创建新连接
-	}
 	otl_connect *conn = NULL;
+	int reConnTime = 0;
+	std::unique_lock<std::mutex> lck(m_mutex);
 	do{
+		if(m_pool.empty()){
+			if(m_uUsedCnt == m_uCnt)  ///池子已满
+				m_condition.wait(lck);
+			else
+				m_pool.push_back(m_connFactory->create());  ///创建新连接
+		}
+
 		conn = &(*(m_pool.back()));
+		m_pool.pop_back();
+
 		if(conn && !conn->connected)
 		{
-			delete conn;
-			conn = NULL;
+			RemoveConnection(conn);
+			sleep(m_reConnDelayTime);
 		}
-		m_pool.pop_back();
-	}while(!conn || m_pool.empty());
+		else
+			++m_uUsedCnt;
 
-	if(NULL != conn)
-		++m_uUsedCnt;
+	}while(!conn && m_reConnTime > reConnTime++);
 
-	pthread_mutex_unlock(&m_mutex);
 	return conn;
 }
 
 void ConnectionPool::Release(otl_connect *conn)
 {
-	pthread_mutex_lock(&m_mutex);
+	std::unique_lock<std::mutex> lck(m_mutex);
 	m_pool.push_back(conn);
 	--m_uUsedCnt;
-	pthread_cond_signal(&m_cond);
-	pthread_mutex_unlock(&m_mutex);
+	m_condition.notify_one();
 }
 
 void ConnectionPool::Initialize()
 {
-	pthread_mutex_init(&m_mutex, NULL);
-	pthread_cond_init(&m_cond , NULL);
 	for(unsigned int i = 0; i< 1 ; ++i ){
 		m_pool.push_back(m_connFactory->create());
 	}

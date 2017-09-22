@@ -11,7 +11,10 @@
 
 namespace DBLIB{
 
+//获取结果集的具体字段
 typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbField *field);
+
+//绑定具体参数字段
 typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbField &field);
 
 
