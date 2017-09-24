@@ -28,11 +28,11 @@ int main(int argc , char* argv[]){
 	DBLIB::Executor executor(conn);
 
 	do{
-		std::shared_ptr<otl_stream> stmtPtr(executor.Query("select password from f_user"));
+		std::shared_ptr<otl_stream> stmtPtr = executor.Query("select password from f_user");
 		DBLIB::_ROW_VEC rowVec;
 		for(;;)
 		{
-			executor.FetchData(stmtPtr.get() ,rowVec);
+			executor.FetchData(stmtPtr ,rowVec);
 			if(rowVec.empty())
 				break;
 			for(auto it = rowVec.begin(); it != rowVec.end(); ++it)

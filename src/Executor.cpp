@@ -143,14 +143,14 @@ Executor::~Executor()
 
 }
 
-otl_stream* Executor::Query(std::string sql  , int buffSize )
+std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 {
-	otl_stream *stmtPtr = new otl_stream();
-	stmtPtr->open(buffSize , sql.c_str() , *m_conn);
-	return stmtPtr;
+	std::shared_ptr<otl_stream> ptr(new otl_stream());
+	ptr->open(buffSize , sql.c_str() , *m_conn);
+	return ptr;
 }
 
-_DBERROR Executor::FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize )
+_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _ROW_VEC &result , int buffSize )
 {
 	otl_column_desc* desc;
 	int desc_len=0;
@@ -172,17 +172,17 @@ _DBERROR Executor::FetchData(otl_stream* stmt , _ROW_VEC &result , int buffSize 
 }
 
 
-otl_stream* Executor::Execute(std::string sql  , int buffSize )
+std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 {
-	otl_stream *stmtPtr = new otl_stream();
-	stmtPtr->open(buffSize , sql.c_str() , *m_conn);
-	stmtPtr->set_commit(0);  ///取消流的自动提交
-	return stmtPtr;
+	std::shared_ptr<otl_stream> ptr(new otl_stream());
+	ptr->open(buffSize , sql.c_str() , *m_conn);
+	ptr->set_commit(0);  ///取消流的自动提交
+	return ptr;
 }
 
 
 ////单条记录绑定
-void Executor::BindParam(otl_stream *otl_stmt , _PARAM_VEC &paramVec , bool bAutoFlush)
+void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _PARAM_VEC &paramVec , bool bAutoFlush)
 {
 	for(_PARAM_VEC::iterator it= paramVec.begin(); it != paramVec.end(); ++it)
 		bindParamRel[it->iType](*otl_stmt,*it);
@@ -192,7 +192,7 @@ void Executor::BindParam(otl_stream *otl_stmt , _PARAM_VEC &paramVec , bool bAut
 }
 
 
-void Executor::BatBindParam(otl_stream *otl_stmt , std::vector<_PARAM_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
+void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_PARAM_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {
 	try
 	{
