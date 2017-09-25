@@ -29,14 +29,11 @@ void threadFunc(std::string phone)
 		otl_connect *conn = DBLIB::ConnectionPool::GetInstance()->GetConnection();
 		DBLIB::Executor executor(conn);
 		std::shared_ptr<otl_stream> stmtPtr = executor.Query("select phone,password from f_user where phone = :v1<char[20]>");
+
 		DBLIB::_RESULT_ROW_VEC rowVec;
-
 		DBLIB::_BINDER_VEC binderVec;
-		DBLIB::DbFieldBinder binder;
-		binder.iType = DBLIB::FIELD_STRING;
-		binder.fieldValue.strValue = const_cast<char*>(phone.c_str());
-		binderVec.push_back(binder);
 
+		DBLIB::DbFieldBinderHelper::BuildBinder4String(binderVec , const_cast<char*>(phone.c_str()));
 
 		executor.BindParam(stmtPtr , binderVec);
 

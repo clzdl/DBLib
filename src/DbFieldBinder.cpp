@@ -7,10 +7,15 @@
 
 #include "DbFieldBinder.h"
 
-
-
 namespace DBLIB{
+
 DbFieldBinder::DbFieldBinder()
+:iType(FIELD_INT)
+{
+
+}
+DbFieldBinder::DbFieldBinder(_FIELD_TYPE type)
+:iType(type)
 {
 
 }
@@ -19,7 +24,7 @@ DbFieldBinder::~DbFieldBinder()
 
 }
 
-void DbFieldBinder::FreeSingleParamVec( std::vector<DbFieldBinder> &vec)
+void DbFieldBinderHelper::FreeSingleParamVec( std::vector<DbFieldBinder> &vec)
 {
 	for(auto it = vec.begin() ; it != vec.end(); ++it)
 	{
@@ -33,12 +38,43 @@ void DbFieldBinder::FreeSingleParamVec( std::vector<DbFieldBinder> &vec)
 		}
 	}
 }
-void DbFieldBinder::FreeMultipleParamVec( std::vector< std::vector<DbFieldBinder> > &vec)
+void DbFieldBinderHelper::FreeMultipleParamVec( std::vector< std::vector<DbFieldBinder> > &vec)
 {
 	for(auto it = vec.begin() ; it != vec.end() ; ++it)
 	{
 		FreeSingleParamVec(*it);
 	}
+}
+
+void DbFieldBinderHelper::BuildBinder4Int(_BINDER_VEC &vecParams,int value)
+{
+	DbFieldBinder binder(DBLIB::FIELD_INT);
+	binder.fieldValue.iValue = value;
+	vecParams.push_back(binder);
+}
+void DbFieldBinderHelper::BuildBinder4Long(_BINDER_VEC &vecParams,long value)
+{
+	DbFieldBinder binder(DBLIB::FIELD_LONG);
+	binder.fieldValue.lValue = value;
+	vecParams.push_back(binder);
+}
+void DbFieldBinderHelper::BuildBinder4Float(_BINDER_VEC &vecParams,float value)
+{
+	DbFieldBinder binder(DBLIB::FIELD_FLOAT);
+	binder.fieldValue.fValue = value;
+	vecParams.push_back(binder);
+}
+void DbFieldBinderHelper::BuildBinder4Double(_BINDER_VEC &vecParams,double value)
+{
+	DbFieldBinder binder(DBLIB::FIELD_DOUBLE);
+	binder.fieldValue.dValue = value;
+	vecParams.push_back(binder);
+}
+void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,char* value)
+{
+	DbFieldBinder binder(DBLIB::FIELD_STRING);
+	binder.fieldValue.strValue = value;
+	vecParams.push_back(binder);
 }
 
 }
