@@ -37,5 +37,11 @@ typedef enum
 
 #define _DUMP_EXCEPTION(e)	fprintf(stderr,"msg:%s,stm_text:%s,var_info:%s\n",e.msg,e.stm_text,e.var_info)
 
+#ifdef _DEBUG
+#define _TRACE_MSG(FMT, ...)      fprintf(stdout,"[%s,%d]" FMT "\n" ,__FILE__ ,__LINE__, ##__VA_ARGS__)
+#else
+#define _TRACE_MSG(FMT, ...)
+#endif
+
 }
 #endif /* _ERR_CODE_H */

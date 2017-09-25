@@ -85,6 +85,8 @@ otl_connect* ConnectionPool::GetConnection()
 			++m_uUsedCnt;
 
 	}while(!conn && m_reConnTime > reConnTime++);
+
+	_TRACE_MSG("get connection: %x , size: %d " , conn , m_pool.size());
 	return conn;
 }
 
@@ -94,6 +96,7 @@ void ConnectionPool::Release(otl_connect *conn)
 	m_pool.push_back(conn);
 	--m_uUsedCnt;
 	m_condition.notify_one();
+	_TRACE_MSG("release connection: %x , size: %d " , conn , m_pool.size());
 }
 
 void ConnectionPool::Initialize()

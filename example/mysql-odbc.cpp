@@ -51,7 +51,7 @@ void threadFunc(int no)
 
 
 int main(int argc , char* argv[]){
-	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"),1);
+	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
 	std::thread t1(threadFunc,1);
 	std::thread t2(threadFunc,2);
 	std::thread t3(threadFunc,3);
