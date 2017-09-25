@@ -40,6 +40,12 @@ public:
 	_DBERROR FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
 
 	/**
+	 * 按数据库原始类型数据进行提取
+	 */
+	_DBERROR FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+
+
+	/**
 	 * 绑定参数
 	 */
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true);
