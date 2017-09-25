@@ -9,7 +9,7 @@
 #include "Executor.h"
 #include <map>
 
-namespace DBLIB{
+namespace DBLib{
 
 //获取结果集的具体字段
 typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);

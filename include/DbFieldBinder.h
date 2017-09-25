@@ -12,7 +12,7 @@
 #include <memory>
 #include "Defines.h"
 
-namespace DBLIB{
+namespace DBLib{
 
 /**
  *  sql 解析语句，参数绑定

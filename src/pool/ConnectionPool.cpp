@@ -10,7 +10,7 @@
 #include "pool/ConnectionPool.h"
 #include "ErrCode.h"
 
-namespace DBLIB{
+namespace DBLib{
 
 ConnectionPool* ConnectionPool::instance = NULL;
 

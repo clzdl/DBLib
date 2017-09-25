@@ -26,14 +26,14 @@
 void threadFunc(std::string phone)
 {
 	do{
-		otl_connect *conn = DBLIB::ConnectionPool::GetInstance()->GetConnection();
-		DBLIB::Executor executor(conn);
+		otl_connect *conn = DBLib::ConnectionPool::GetInstance()->GetConnection();
+		DBLib::Executor executor(conn);
 		std::shared_ptr<otl_stream> stmtPtr = executor.Query("select phone,password from f_user where phone = :v1<char[20]>");
 
-		DBLIB::_RESULT_ROW_VEC rowVec;
-		DBLIB::_BINDER_VEC binderVec;
+		DBLib::_RESULT_ROW_VEC rowVec;
+		DBLib::_BINDER_VEC binderVec;
 
-		DBLIB::DbFieldBinderHelper::BuildBinder4String(binderVec , const_cast<char*>(phone.c_str()));
+		DBLib::DbFieldBinderHelper::BuildBinder4String(binderVec , const_cast<char*>(phone.c_str()));
 
 		executor.BindParam(stmtPtr , binderVec);
 
@@ -47,14 +47,14 @@ void threadFunc(std::string phone)
 
 		usleep(100);
 
-		DBLIB::ConnectionPool::GetInstance()->Release(conn);
+		DBLib::ConnectionPool::GetInstance()->Release(conn);
 
 	}while(1);
 }
 
 
 int main(int argc , char* argv[]){
-	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
+	DBLib::ConnectionPool::Initialize(new DBLib::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
 	std::thread t1(threadFunc,"18645005420");
 	std::thread t2(threadFunc,"18731173110");
 	std::thread t3(threadFunc,"18611628964");

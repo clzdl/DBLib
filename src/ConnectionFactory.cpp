@@ -7,7 +7,7 @@
 
 
 #include "ConnectionFactory.h"
-namespace DBLIB{
+namespace DBLib{
 
 ConnectionFactory::ConnectionFactory(std::string connString)
 :m_connString(connString)

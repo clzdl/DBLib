@@ -12,7 +12,7 @@
 #include <memory>
 #include "Defines.h"
 
-namespace DBLIB{
+namespace DBLib{
 
 /**
  *  结果集提取

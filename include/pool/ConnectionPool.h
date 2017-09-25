@@ -18,7 +18,7 @@
  * 本想利用 otl的连接池，但查阅一边后不符合要求
  */
 
-namespace DBLIB{
+namespace DBLib{
 
 class ConnectionPool{
 public:

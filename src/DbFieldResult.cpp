@@ -10,7 +10,7 @@
 #include "string.h"
 
 
-namespace DBLIB{
+namespace DBLib{
 
 DbFieldResult::DbFieldResult()
 {
@@ -24,7 +24,7 @@ DbFieldResult::DbFieldResult(_FIELD_TYPE type)
 
 DbFieldResult::~DbFieldResult()
 {
-	if(iType == DBLIB::FIELD_STRING && fieldValue.strValue != NULL)
+	if(iType == DBLib::FIELD_STRING && fieldValue.strValue != NULL)
 	{
 		delete [] fieldValue.strValue;
 		fieldValue.strValue = NULL;

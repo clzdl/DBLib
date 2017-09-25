@@ -8,7 +8,7 @@
 #ifndef _ERR_CODE_H
 #define _ERR_CODE_H
 
-namespace DBLIB{
+namespace DBLib{
 
 ////转换错误码定义
 #define _ERR_MAP(X)                                            \

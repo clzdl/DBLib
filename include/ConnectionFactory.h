@@ -12,7 +12,7 @@
 #include <string>
 #include "otl/otlv4config.h"
 
-namespace DBLIB{
+namespace DBLib{
 
 
 class ConnectionFactory

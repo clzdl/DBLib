@@ -13,7 +13,7 @@
 #include "ErrCode.h"
 #include <string>
 #include "otl/otlv4config.h"
-namespace DBLIB{
+namespace DBLib{
 
 const int DEFAULT_BUFF_SIZE = 20;
 

@@ -8,7 +8,7 @@
 #ifndef INCLUDE_DEFINES_H_
 #define INCLUDE_DEFINES_H_
 
-namespace DBLIB{
+namespace DBLib{
 
 typedef enum
 {
