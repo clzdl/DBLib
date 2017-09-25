@@ -23,26 +23,32 @@
 #include "Executor.h"
 
 
-void threadFunc(int no)
+void threadFunc(std::string phone)
 {
 	do{
 		otl_connect *conn = DBLIB::ConnectionPool::GetInstance()->GetConnection();
 		DBLIB::Executor executor(conn);
-		std::shared_ptr<otl_stream> stmtPtr = executor.Query("select password from f_user");
-		DBLIB::_ROW_VEC rowVec;
-		for(;;)
-		{
-			executor.FetchData(stmtPtr ,rowVec);
-			if(rowVec.empty())
-				break;
-			for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
-			{
-				fprintf(stdout , "thread[%d]%s\n" , no,it->at(0)->fieldValue.strValue);
-			}
+		std::shared_ptr<otl_stream> stmtPtr = executor.Query("select phone,password from f_user where phone = :v1<char[20]>");
+		DBLIB::_RESULT_ROW_VEC rowVec;
 
-			rowVec.clear();
-			usleep(100);
+		DBLIB::_BINDER_VEC binderVec;
+		DBLIB::DbFieldBinder binder;
+		binder.iType = DBLIB::FIELD_STRING;
+		binder.fieldValue.strValue = const_cast<char*>(phone.c_str());
+		binderVec.push_back(binder);
+
+
+		executor.BindParam(stmtPtr , binderVec);
+
+		executor.FetchData(stmtPtr ,rowVec);
+		if(rowVec.empty())
+			break;
+		for(auto it = rowVec.begin(); it != rowVec.end(); ++it)
+		{
+			fprintf(stdout , "%s,%s\n" , it->at(0)->fieldValue.strValue,it->at(1)->fieldValue.strValue);
 		}
+
+		usleep(100);
 
 		DBLIB::ConnectionPool::GetInstance()->Release(conn);
 
@@ -52,10 +58,10 @@ void threadFunc(int no)
 
 int main(int argc , char* argv[]){
 	DBLIB::ConnectionPool::Initialize(new DBLIB::ConnectionFactory("UID=root;PWD=root;DSN=myodbc3"));
-	std::thread t1(threadFunc,1);
-	std::thread t2(threadFunc,2);
-	std::thread t3(threadFunc,3);
-	std::thread t4(threadFunc,4);
+	std::thread t1(threadFunc,"18645005420");
+	std::thread t2(threadFunc,"18731173110");
+	std::thread t3(threadFunc,"18611628964");
+	std::thread t4(threadFunc,"18618488857");
 
 	t1.join();
 	t2.join();

@@ -12,13 +12,13 @@
 namespace DBLIB{
 
 //获取结果集的具体字段
-typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbField *field);
+typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field);
 
 //绑定具体参数字段
-typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbField &field);
+typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
 
 
-static _DBERROR AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbField *field)
+static _DBERROR AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field)
 {
 	field->fieldValue.strValue = new char[desc.dbsize+1]();
 	field->iType = FIELD_STRING;
@@ -26,7 +26,7 @@ static _DBERROR AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbField 
 	return E_OK;
 }
 
-static _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbField *field)
+static _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field)
 {
 	if(desc.scale == 0 )
 	{
@@ -44,7 +44,7 @@ static _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbField 
 	return E_OK;
 }
 
-static _DBERROR AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbField *field)
+static _DBERROR AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field)
 {
 	field->iType = FIELD_INT;
 	stmt>>field->fieldValue.iValue;
@@ -53,7 +53,7 @@ static _DBERROR AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbField *fi
 	return E_OK;
 }
 
-static _DBERROR AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbField *field)
+static _DBERROR AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field)
 {
 	field->iType = FIELD_LONG;
 	stmt>>field->fieldValue.lValue;
@@ -63,7 +63,7 @@ static _DBERROR AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbField *f
 }
 
 
-static _DBERROR AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbField *field)
+static _DBERROR AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field)
 {
 	otl_datetime tmp;
 	stmt>>tmp;
@@ -94,33 +94,33 @@ std::map<int,AssFieldFunc> assFieldRel = {
 };
 
 
-static _DBERROR BindInteger(otl_stream &stmt ,DbField &field)
+static _DBERROR BindInteger(otl_stream &stmt ,DbFieldBinder &binder)
 {
-	stmt<<field.fieldValue.iValue;
+	stmt<<binder.fieldValue.iValue;
 	return E_OK;
 }
 
-static _DBERROR BindLong( otl_stream &stmt ,DbField &field)
+static _DBERROR BindLong( otl_stream &stmt ,DbFieldBinder &binder)
 {
-	stmt<<field.fieldValue.lValue;
+	stmt<<binder.fieldValue.lValue;
 	return E_OK;
 }
 
-static _DBERROR BindFloat( otl_stream &stmt ,DbField &field)
+static _DBERROR BindFloat( otl_stream &stmt ,DbFieldBinder &binder)
 {
-	stmt<<field.fieldValue.fValue;
+	stmt<<binder.fieldValue.fValue;
 	return E_OK;
 }
 
-static _DBERROR BindDouble( otl_stream &stmt ,DbField &field)
+static _DBERROR BindDouble( otl_stream &stmt ,DbFieldBinder &binder)
 {
-	stmt<<field.fieldValue.dValue;
+	stmt<<binder.fieldValue.dValue;
 	return E_OK;
 }
 
-static _DBERROR BindString( otl_stream &stmt ,DbField &field)
+static _DBERROR BindString( otl_stream &stmt ,DbFieldBinder &binder)
 {
-	stmt<<field.fieldValue.strValue;
+	stmt<<binder.fieldValue.strValue;
 	return E_OK;
 }
 
@@ -150,20 +150,21 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 	return ptr;
 }
 
-_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _ROW_VEC &result , int buffSize )
+_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
 {
 	otl_column_desc* desc;
 	int desc_len=0;
-	_ROW record;
+	_RESULT_ROW record;
 
 	desc=stmt->describe_select(desc_len);
 	while(!stmt->eof() && ( 0 < buffSize--) ) // while not end-of-data
 	{
-		DbField *dbField = new DbField();
+		DbFieldResult *dbField = NULL;
 		for (int n = 0; n < desc_len;++n)
 		{
+			dbField = new DbFieldResult();
 			assFieldRel[desc[n].otl_var_dbtype](*stmt , desc[n] , dbField);
-			record.push_back(std::shared_ptr<DbField>(dbField));
+			record.push_back(std::shared_ptr<DbFieldResult>(dbField));
 		}
 		result.push_back(record);
 		record.clear();
@@ -182,9 +183,9 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 
 
 ////单条记录绑定
-void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _PARAM_VEC &paramVec , bool bAutoFlush)
+void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush)
 {
-	for(_PARAM_VEC::iterator it= paramVec.begin(); it != paramVec.end(); ++it)
+	for(_BINDER_VEC::iterator it= paramVec.begin(); it != paramVec.end(); ++it)
 		bindParamRel[it->iType](*otl_stmt,*it);
 
 	if(bAutoFlush)
@@ -192,11 +193,11 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _PARAM_VEC &para
 }
 
 
-void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_PARAM_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
+void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {
 	try
 	{
-		for(std::vector<_PARAM_VEC>::iterator it  = mutiParamVec.begin() ;it != mutiParamVec.end(); ++it)
+		for(std::vector<_BINDER_VEC>::iterator it  = mutiParamVec.begin() ;it != mutiParamVec.end(); ++it)
 			BindParam(otl_stmt , *it , false);
 
 		///正常缓冲区满后自动刷新

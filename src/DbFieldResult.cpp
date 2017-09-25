@@ -5,24 +5,24 @@
  *      Author: cplusplus
  */
 
-#include "DbField.h"
+#include <DbFieldResult.h>
 #include "stdlib.h"
 #include "string.h"
 
 
 namespace DBLIB{
 
-DbField::DbField()
+DbFieldResult::DbFieldResult()
 {
 
 }
 
-DbField::DbField(_FIELD_TYPE type)
+DbFieldResult::DbFieldResult(_FIELD_TYPE type)
 :iType(type)
 {
 }
 
-DbField::~DbField()
+DbFieldResult::~DbFieldResult()
 {
 	if(iType == DBLIB::FIELD_STRING && fieldValue.strValue != NULL)
 	{
@@ -31,7 +31,7 @@ DbField::~DbField()
 	}
 }
 
-DbField::DbField(const DbField &field)
+DbFieldResult::DbFieldResult(const DbFieldResult &field)
 :iType(field.iType)
 {
 	if(FIELD_STRING == iType)
@@ -42,7 +42,7 @@ DbField::DbField(const DbField &field)
 		memcpy(&fieldValue, &field.fieldValue , sizeof(field.fieldValue));
 	}
 }
-DbField& DbField::operator = (const DbField &field)
+DbFieldResult& DbFieldResult::operator = (const DbFieldResult &field)
 {
 	if(this == &field)
 		return *this;
