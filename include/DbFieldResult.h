@@ -14,6 +14,9 @@
 
 namespace DBLIB{
 
+/**
+ *  结果集提取
+ */
 class DbFieldResult
 {
 public:
@@ -30,7 +33,7 @@ public:
 //提取结果集使用
 typedef std::vector< std::shared_ptr<DbFieldResult> >  _RESULT_ROW ;
 
-typedef   std::vector<_RESULT_ROW>  _RESULT_ROW_VEC ;
+typedef	std::vector<_RESULT_ROW>  _RESULT_ROW_VEC ;
 }
 
 

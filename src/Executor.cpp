@@ -185,7 +185,7 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 ////单条记录绑定
 void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush)
 {
-	for(_BINDER_VEC::iterator it= paramVec.begin(); it != paramVec.end(); ++it)
+	for(auto it= paramVec.begin(); it != paramVec.end(); ++it)
 		bindParamRel[it->iType](*otl_stmt,*it);
 
 	if(bAutoFlush)
@@ -197,7 +197,7 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 {
 	try
 	{
-		for(std::vector<_BINDER_VEC>::iterator it  = mutiParamVec.begin() ;it != mutiParamVec.end(); ++it)
+		for(auto it  = mutiParamVec.begin() ;it != mutiParamVec.end(); ++it)
 			BindParam(otl_stmt , *it , false);
 
 		///正常缓冲区满后自动刷新
