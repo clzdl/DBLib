@@ -18,8 +18,10 @@ ConnectionFactory::~ConnectionFactory(){
 
 otl_connect* ConnectionFactory::create()
 {
+
 	otl_connect* conn = new otl_connect();
 	conn->rlogon(m_connString.c_str() , false);
+	fprintf(stdout," create connection .[%x].\n",conn);
 	return conn;
 }
 }

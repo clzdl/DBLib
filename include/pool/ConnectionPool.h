@@ -25,7 +25,7 @@ public:
 	/**
 	 * 初始化连接池
 	 */
-	static void Initialize(ConnectionFactory *factory,unsigned int maxSize = 4);
+	static void Initialize(ConnectionFactory *factory,unsigned int maxSize = 2);
 
 	/**
 	 * 获取实例

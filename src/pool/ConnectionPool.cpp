@@ -8,6 +8,7 @@
 #include "stdio.h"
 #include <unistd.h>
 #include "pool/ConnectionPool.h"
+#include "ErrCode.h"
 
 namespace DBLIB{
 
@@ -15,8 +16,13 @@ ConnectionPool* ConnectionPool::instance = NULL;
 
 static void RemoveConnection(otl_connect *conn)
 {
-	conn->rollback();
-	conn->logoff();
+	try
+	{
+		conn->rollback();
+		conn->logoff();
+	}catch (otl_exception &e) {
+		_DUMP_EXCEPTION(e);
+	}
 	delete conn;
 	conn = NULL;
 }
@@ -57,16 +63,19 @@ otl_connect* ConnectionPool::GetConnection()
 	int reConnTime = 0;
 	std::unique_lock<std::mutex> lck(m_mutex);
 	do{
-		if(m_pool.empty()){
+		while(m_pool.empty())
+		{
 			if(m_uUsedCnt == m_uCnt)  ///池子已满
 				m_condition.wait(lck);
 			else
+			{
 				m_pool.push_back(m_connFactory->create());  ///创建新连接
+				break;
+			}
 		}
 
-		conn = &(*(m_pool.back()));
+		conn = m_pool.back();
 		m_pool.pop_back();
-
 		if(conn && !conn->connected)
 		{
 			RemoveConnection(conn);
@@ -76,7 +85,6 @@ otl_connect* ConnectionPool::GetConnection()
 			++m_uUsedCnt;
 
 	}while(!conn && m_reConnTime > reConnTime++);
-
 	return conn;
 }
 
