@@ -56,6 +56,10 @@ public:
 	 */
 	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL);
 
+
+	static void Commit(otl_connect *conn);
+
+	static void Rollback(otl_connect *conn);
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);

@@ -191,6 +191,7 @@ _DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC 
 	int desc_len=0;
 	_RESULT_ROW record;
 
+	result.clear();
 	desc=stmt->describe_select(desc_len);
 	while(!stmt->eof() && ( 0 < buffSize--) ) // while not end-of-data
 	{
@@ -289,7 +290,19 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 		}while(bGoOn);
 #endif
 	}
-}
 
 }
+
+void Executor::Commit(otl_connect *conn)
+{
+	conn->commit();
+}
+
+void Executor::Rollback(otl_connect *conn)
+{
+	conn->rollback();
+}
+}
+
+
 
