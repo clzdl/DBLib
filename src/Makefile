@@ -15,10 +15,10 @@ U_OBJS =ConnectionFactory.cpp \
 
 
 #链接库集合
-U_LIB =
+U_LIB = -lCommonUtil
 
 #头文件路径
-U_INC =
+U_INC = -I$(PUBLICINCLUDE)/CommonUtil
 
 #调试
 U_DEBUG = -D_DEBUG

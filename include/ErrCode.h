@@ -7,7 +7,8 @@
 
 #ifndef _ERR_CODE_H
 #define _ERR_CODE_H
-
+#include "Exception.h"
+#include "MacroDefUtil.h"
 namespace DBLib{
 
 ////转换错误码定义
@@ -37,11 +38,21 @@ typedef enum
 
 #define _DUMP_EXCEPTION(e)	fprintf(stderr,"msg:%s,stm_text:%s,var_info:%s\n",e.msg,e.stm_text,e.var_info)
 
-#ifdef _DEBUG
-#define _TRACE_MSG(FMT, ...)      fprintf(stdout,"[%s,%d]" FMT "\n" ,__FILE__ ,__LINE__, ##__VA_ARGS__)
-#else
-#define _TRACE_MSG(FMT, ...)
-#endif
+///////oracle error
+#define ORA_PIPE_BREAK       3113
+#define ORA_DISCONNECT       3114
+
+using namespace CommonUtils;
+/**
+ * 定义Oracle数据库异常
+ */
+DECLARE_EXCEPTION(OraException, CommonUtils::Exception);
+///oracle 数据库连接断开
+DECLARE_EXCEPTION(OraConnBreakException, OraException);
+///oracle 数据库sql错误
+DECLARE_EXCEPTION(OraSqlException, OraException);
+
+
 
 }
 #endif /* _ERR_CODE_H */

@@ -27,39 +27,39 @@ public:
 	/**
 	 * 需要后续释放内存
 	 */
-	std::shared_ptr<otl_stream> Query(std::string sql , int buffSize = DEFAULT_BUFF_SIZE);
+	std::shared_ptr<otl_stream> Query(std::string sql , int buffSize = DEFAULT_BUFF_SIZE) throw();
 
 	/**
 	 * 执行更新数据的sql
 	 */
-	std::shared_ptr<otl_stream> Execute(std::string sql  , int buffSize = 1 );
+	std::shared_ptr<otl_stream> Execute(std::string sql  , int buffSize = 1 ) throw();
 
 	/**
 	 * 提取数据
 	 */
-	_DBERROR FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+	_DBERROR FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE) throw();
 
 	/**
 	 * 按数据库原始类型数据进行提取
 	 */
-	_DBERROR FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+	_DBERROR FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE) throw();
 
 
 	/**
 	 * 绑定参数
 	 */
-	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true);
+	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true) throw();
 
 	/**
 	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行
 	 * errVec 接受出错行的行号
 	 */
-	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL);
+	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL) throw();
 
 
-	static void Commit(otl_connect *conn);
+	static void Commit(otl_connect *conn) throw();
 
-	static void Rollback(otl_connect *conn);
+	static void Rollback(otl_connect *conn) throw();
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);
