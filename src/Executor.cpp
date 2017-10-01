@@ -307,6 +307,26 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 }
 
 
+void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,int paramCnt,... )
+{
+	// (1) 定义参数列表
+	va_list ap;
+	// (2) 初始化参数列表
+	va_start(ap, paramCnt);
+	// 获取参数值
+	DbFieldBinder binder;
+	while(paramCnt > 0)
+	{
+		binder = va_arg(ap, DbFieldBinder);
+		bindParamRel[binder.iType](*otl_stmt,binder);
+		--paramCnt;
+	}
+
+	// 关闭参数列表
+	va_end(ap);
+}
+
+
 void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec) throw()
 {
 	try

@@ -19,6 +19,23 @@ DbFieldBinder::DbFieldBinder(_FIELD_TYPE type)
 {
 
 }
+
+DbFieldBinder::DbFieldBinder(long value)
+:iType(FIELD_LONG)
+{
+	fieldValue.lValue = value;
+}
+DbFieldBinder::DbFieldBinder(double value)
+:iType(FIELD_DOUBLE)
+{
+	fieldValue.dValue = value;
+}
+DbFieldBinder::DbFieldBinder(char* value)
+:iType(FIELD_STRING)
+{
+	fieldValue.strValue = value;
+}
+
 DbFieldBinder::~DbFieldBinder()
 {
 

@@ -22,6 +22,9 @@ class DbFieldBinder
 public:
 	DbFieldBinder();
 	DbFieldBinder(_FIELD_TYPE type);
+	DbFieldBinder(long value);
+	DbFieldBinder(double value);
+	DbFieldBinder(char* value);
 	~DbFieldBinder();
 
 	_FIELD_TYPE iType;

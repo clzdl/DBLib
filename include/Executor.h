@@ -51,6 +51,13 @@ public:
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true) throw();
 
 	/**
+	 * 变长绑定参数,
+	 * BindParam(otlPtr,2,DbFieldBinder(1111,111.11,"1111"),DbFieldBinder(1111,111.11,"1111"));
+	 */
+	void BindParam(std::shared_ptr<otl_stream> otl_stmt,int paramCnt , ...);
+
+
+	/**
 	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行
 	 * errVec 接受出错行的行号
 	 */
@@ -60,6 +67,9 @@ public:
 	static void Commit(otl_connect *conn) throw();
 
 	static void Rollback(otl_connect *conn) throw();
+
+	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,... );
+
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);
