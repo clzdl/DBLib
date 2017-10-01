@@ -52,9 +52,10 @@ public:
 
 	/**
 	 * 变长绑定参数,
-	 * BindParam(otlPtr,2,DbFieldBinder(1111,111.11,"1111"),DbFieldBinder(1111,111.11,"1111"));
+	 * 可变参数必须为 DbFieldBinder 类型
+	 *
 	 */
-	void BindParam(std::shared_ptr<otl_stream> otl_stmt,int paramCnt , ...);
+	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt , ...);
 
 
 	/**

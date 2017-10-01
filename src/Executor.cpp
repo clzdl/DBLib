@@ -307,23 +307,36 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 }
 
 
-void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,int paramCnt,... )
+void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt,... )
 {
-	// (1) 定义参数列表
-	va_list ap;
-	// (2) 初始化参数列表
-	va_start(ap, paramCnt);
-	// 获取参数值
-	DbFieldBinder binder;
-	while(paramCnt > 0)
+	try
 	{
-		binder = va_arg(ap, DbFieldBinder);
-		bindParamRel[binder.iType](*otl_stmt,binder);
-		--paramCnt;
-	}
+		// (1) 定义参数列表
+		va_list ap;
+		// (2) 初始化参数列表
+		va_start(ap, paramCnt);
+		// 获取参数值
+		DbFieldBinder binder;
+		while(paramCnt > 0)
+		{
+			binder = va_arg(ap, DbFieldBinder);
+			bindParamRel[binder.iType](*otl_stmt,binder);
+			--paramCnt;
+		}
+		// 关闭参数列表
+		va_end(ap);
 
-	// 关闭参数列表
-	va_end(ap);
+		if(bAutoFlush)
+			otl_stmt->flush(); /// 刷新绑定变量缓冲区，使sql真正执行；
+	}
+	catch(otl_exception& e)
+	{
+		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
+		{
+			THROW(OraConnBreakException,"connect is break.");
+		}
+		throw;
+	}
 }
 
 
@@ -344,8 +357,8 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 			THROW(OraConnBreakException,"connect is break.");
 		}
 #ifndef OTL_ODBC
-		int rpc = 0;  ///成功执行记录数
-		int total_rpc = 0;   ///总的执行数
+		long rpc = 0;  ///成功执行记录数
+		long total_rpc = 0;   ///总的执行数
 		bool bGoOn = false;
 		do{
 			try
@@ -353,7 +366,7 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 				////flush后重新计数
 				rpc=otl_stmt->get_rpc();
 				total_rpc += rpc;
-				fprintf(stderr,"TOTAL_RPC= %ld,RPC= %ld \n" ,total_rpc ,rpc);
+				_TRACE_MSG("TOTAL_RPC= %ld,RPC= %ld \n" ,total_rpc ,rpc);
 				////20150608
 				if(NULL != errVec)
 					errVec->push_back(total_rpc);   ////出错行位置号
@@ -377,7 +390,8 @@ void Executor::Commit(otl_connect *conn) throw()
 	try
 	{
 		conn->commit();
-	}catch(otl_exception& e)
+	}
+	catch(otl_exception& e)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
@@ -392,7 +406,8 @@ void Executor::Rollback(otl_connect *conn) throw()
 	try
 	{
 		conn->rollback();
-	}catch(otl_exception& e)
+	}
+	catch(otl_exception& e)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
