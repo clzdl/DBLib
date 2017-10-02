@@ -178,7 +178,7 @@ Executor::~Executor()
 
 }
 
-std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize ) throw()
+std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 {
 	try
 	{
@@ -196,7 +196,7 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize ) th
 	}
 }
 
-_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize ) throw()
+_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
 {
 	try
 	{
@@ -231,7 +231,7 @@ _DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC 
 }
 
 
-_DBERROR Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize ) throw()
+_DBERROR Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
 {
 	try
 	{
@@ -265,7 +265,7 @@ _DBERROR Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_V
 }
 
 
-std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize ) throw()
+std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 {
 	try
 	{
@@ -286,7 +286,7 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize ) 
 
 
 ////单条记录绑定
-void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush) throw()
+void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush)
 {
 	try
 	{
@@ -340,7 +340,7 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,in
 }
 
 
-void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec) throw()
+void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {
 	try
 	{
@@ -385,7 +385,7 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 
 }
 
-void Executor::Commit(otl_connect *conn) throw()
+void Executor::Commit(otl_connect *conn)
 {
 	try
 	{
@@ -401,7 +401,7 @@ void Executor::Commit(otl_connect *conn) throw()
 	}
 }
 
-void Executor::Rollback(otl_connect *conn) throw()
+void Executor::Rollback(otl_connect *conn)
 {
 	try
 	{
