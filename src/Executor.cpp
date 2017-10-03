@@ -182,8 +182,9 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 {
 	try
 	{
-		std::shared_ptr<otl_stream> ptr(new otl_stream());
+		std::shared_ptr<otl_stream> ptr = std::make_shared<otl_stream>();
 		ptr->open(buffSize , sql.c_str() , *m_conn);
+		ptr->set_commit(0);  ///取消流的自动提交
 		return ptr;
 	}
 	catch(otl_exception& e)
@@ -269,7 +270,7 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 {
 	try
 	{
-		std::shared_ptr<otl_stream> ptr(new otl_stream());
+		std::shared_ptr<otl_stream> ptr = std::make_shared<otl_stream>();
 		ptr->open(buffSize , sql.c_str() , *m_conn);
 		ptr->set_commit(0);  ///取消流的自动提交
 		return ptr;
