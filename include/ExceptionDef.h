@@ -45,11 +45,10 @@ typedef enum
 /**
  * 定义Oracle数据库异常
  */
-DECLARE_EXCEPTION(DBException, CommonUtils::Exception);
 ///oracle 数据库连接断开
-DECLARE_EXCEPTION(DBConnBreakException, DBException);
+DECLARE_EXCEPTION(DBConnBreakException, CommonUtils::Exception);
 ///oracle 数据库sql错误
-DECLARE_EXCEPTION(DBSqlException, DBException);
+DECLARE_EXCEPTION(DBSqlException, CommonUtils::Exception);
 
 
 
