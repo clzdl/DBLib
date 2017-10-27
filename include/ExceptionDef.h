@@ -42,7 +42,6 @@ typedef enum
 #define ORA_PIPE_BREAK       3113
 #define ORA_DISCONNECT       3114
 
-using namespace CommonUtils;
 /**
  * 定义Oracle数据库异常
  */

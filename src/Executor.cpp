@@ -210,7 +210,7 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -243,7 +243,7 @@ void Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &res
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -276,7 +276,7 @@ void Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -296,7 +296,7 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -318,7 +318,7 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -351,7 +351,7 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,in
 		{
 			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
