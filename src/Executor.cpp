@@ -11,12 +11,29 @@
 
 namespace DBLib{
 
+
 //获取结果集的具体字段
 typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
 
 //绑定具体参数字段
 typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
 
+#define _STRERROR_GEN(t1,t2,t3)        { t2, t3 },
+static struct ErrInfoMap
+{
+    const char *strErrCode;
+    const char *strErrRemark;
+} stErrInfoMap[] = {
+		_ERR_MAP(_STRERROR_GEN)
+};
+
+#undef _STRERROR_GEN
+
+
+const char *Errno2String(_DBERROR err)
+{
+    return stErrInfoMap[err].strErrRemark;
+}
 
 static _DBERROR AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
@@ -191,13 +208,13 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
-_DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
+void Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
 {
 	try
 	{
@@ -219,20 +236,19 @@ _DBERROR Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC 
 			result.push_back(record);
 			record.clear();
 		}
-		return E_OK;
 	}
 	catch(otl_exception& e)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
 
-_DBERROR Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
+void Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize )
 {
 	try
 	{
@@ -253,15 +269,14 @@ _DBERROR Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_V
 			result.push_back(record);
 			record.clear();
 		}
-		return E_OK;
 	}
 	catch(otl_exception& e)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
@@ -279,9 +294,9 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
@@ -301,9 +316,9 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
@@ -334,9 +349,9 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,in
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
@@ -355,7 +370,7 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
 #ifndef OTL_ODBC
 		long rpc = 0;  ///成功执行记录数
@@ -396,9 +411,9 @@ void Executor::Commit(otl_connect *conn)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 }
 
@@ -412,9 +427,9 @@ void Executor::Rollback(otl_connect *conn)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW(OraConnBreakException,"connect is break.");
+			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
 		}
-		throw;
+		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
 	}
 
 }

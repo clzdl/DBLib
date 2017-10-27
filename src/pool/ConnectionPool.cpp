@@ -5,10 +5,10 @@
  *      Author: cplusplus
  */
 
+#include <ExceptionDef.h>
 #include "stdio.h"
 #include <unistd.h>
 #include "pool/ConnectionPool.h"
-#include "ErrCode.h"
 
 namespace DBLib{
 

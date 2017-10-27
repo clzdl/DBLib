@@ -46,11 +46,11 @@ using namespace CommonUtils;
 /**
  * 定义Oracle数据库异常
  */
-DECLARE_EXCEPTION(OraException, CommonUtils::Exception);
+DECLARE_EXCEPTION(DBException, CommonUtils::Exception);
 ///oracle 数据库连接断开
-DECLARE_EXCEPTION(OraConnBreakException, OraException);
+DECLARE_EXCEPTION(DBConnBreakException, DBException);
 ///oracle 数据库sql错误
-DECLARE_EXCEPTION(OraSqlException, OraException);
+DECLARE_EXCEPTION(DBSqlException, DBException);
 
 
 

@@ -8,9 +8,9 @@
 #ifndef INCLUDE_EXECUTOR_H_
 #define INCLUDE_EXECUTOR_H_
 
+#include <ExceptionDef.h>
 #include "DbFieldResult.h"
 #include "DbFieldBinder.h"
-#include "ErrCode.h"
 #include <string>
 #include "otl/otlv4config.h"
 namespace DBLib{
@@ -25,7 +25,7 @@ public:
 	~Executor();
 
 	/**
-	 * 需要后续释放内存
+	 * 打开查询流
 	 */
 	std::shared_ptr<otl_stream> Query(std::string sql , int buffSize = DEFAULT_BUFF_SIZE);
 
@@ -37,12 +37,12 @@ public:
 	/**
 	 * 提取数据
 	 */
-	_DBERROR FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+	void FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
 
 	/**
 	 * 按数据库原始类型数据进行提取
 	 */
-	_DBERROR FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
+	void FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &result , int buffSize = DEFAULT_BUFF_SIZE);
 
 
 	/**

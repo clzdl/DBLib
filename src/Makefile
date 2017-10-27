@@ -30,4 +30,4 @@ U_CFLAGS =  -std=c++0x
 U_LFLAGS = 
 
 #引用mk模板
-include ${make_path}/mk.pub
+include ${make_pathv2}/mk.pub
