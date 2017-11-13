@@ -7,7 +7,6 @@
 
 
 #include "Executor.h"
-#include <map>
 
 namespace DBLib{
 
@@ -15,22 +14,17 @@ namespace DBLib{
 //获取结果集的具体字段
 typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
 
-//绑定具体参数字段
-typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
+
 
 #define _STRERROR_GEN(t1,t2,t3)        { t2, t3 },
-static struct ErrInfoMap
-{
-    const char *strErrCode;
-    const char *strErrRemark;
-} stErrInfoMap[] = {
+Executor::ErrInfoMap Executor::stErrInfoMap[] = {
 		_ERR_MAP(_STRERROR_GEN)
 };
 
 #undef _STRERROR_GEN
 
 
-const char *Errno2String(_DBERROR err)
+const char* Executor::Errno2String(_DBERROR err)
 {
     return stErrInfoMap[err].strErrRemark;
 }
@@ -176,7 +170,7 @@ static _DBERROR BindString( otl_stream &stmt ,DbFieldBinder &binder)
 	return E_OK;
 }
 
-std::map<int , BindFunc> bindParamRel = {
+std::map<int , BindFunc>  Executor::bindParamRel = {
 	{FIELD_INT, BindInteger},
 	{FIELD_LONG, BindLong},
 	{FIELD_FLOAT, BindFloat},
@@ -353,7 +347,6 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 //		throw;
 //	}
 //}
-
 void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {
 	try

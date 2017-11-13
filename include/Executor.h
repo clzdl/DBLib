@@ -13,14 +13,21 @@
 #include "DbFieldBinder.h"
 #include <string>
 #include "otl/otlv4config.h"
+#include <map>
 namespace DBLib{
 
 const int DEFAULT_BUFF_SIZE = 20;
 
-
+//绑定具体参数字段
+typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
 class Executor
 {
 public:
+	struct ErrInfoMap
+	{
+		const char *strErrCode;
+		const char *strErrRemark;
+	};
 	Executor(otl_connect *conn);
 	~Executor();
 
@@ -57,6 +64,29 @@ public:
 //	 * g++4.9.4 报错， DbFieldBinder  non-trivially-copyable
 //	 */
 //	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt , ...);
+	template<typename T=DbFieldBinder, typename... Args>
+	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,T binder ,Args... args)
+	{
+		try
+		{
+			bindParamRel[binder.iType](*otl_stmt,binder);
+			if(sizeof...(args) > 0){
+				BindParam(otl_stmt , bAutoFlush , std::forward(args...));
+			}
+			else
+			{
+				return ;
+			}
+		}
+		catch(otl_exception& e)
+		{
+			if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
+			{
+				THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			}
+			throw;
+		}
+	}
 
 	/**
 	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行
@@ -71,10 +101,17 @@ public:
 
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,... );
 
+	static const char *Errno2String(_DBERROR err);
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);
 	otl_connect *m_conn;
+
+	static std::map<int , BindFunc> bindParamRel;
+
+
+
+	static ErrInfoMap stErrInfoMap[];
 };
 
 }
