@@ -6,6 +6,7 @@
  */
 
 #include "DbFieldBinder.h"
+#include "string.h"
 
 namespace DBLib{
 

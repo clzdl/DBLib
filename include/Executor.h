@@ -50,13 +50,13 @@ public:
 	 */
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true) ;
 
-	/**
-	 * 变长绑定参数,
-	 * 可变参数必须为 DbFieldBinder 类型
-	 *
-	 */
-	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt , ...);
 
+	/**
+//	 * 变长绑定参数,
+//	 * 可变参数必须为 DbFieldBinder 类型
+//	 * g++4.9.4 报错， DbFieldBinder  non-trivially-copyable
+//	 */
+//	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt , ...);
 
 	/**
 	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行

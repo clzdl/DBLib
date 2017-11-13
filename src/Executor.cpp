@@ -321,40 +321,38 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 		throw;
 	}
 }
-
-
-void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt,... )
-{
-	try
-	{
-		// (1) 定义参数列表
-		va_list ap;
-		// (2) 初始化参数列表
-		va_start(ap, paramCnt);
-		// 获取参数值
-		DbFieldBinder binder;
-		while(paramCnt > 0)
-		{
-			binder = va_arg(ap, DbFieldBinder);
-			bindParamRel[binder.iType](*otl_stmt,binder);
-			--paramCnt;
-		}
-		// 关闭参数列表
-		va_end(ap);
-
-		if(bAutoFlush)
-			otl_stmt->flush(); /// 刷新绑定变量缓冲区，使sql真正执行；
-	}
-	catch(otl_exception& e)
-	{
-		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
-		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
-		}
-		throw;
-	}
-}
-
+//
+//void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt,... )
+//{
+//	try
+//	{
+//		// (1) 定义参数列表
+//		va_list ap;
+//		// (2) 初始化参数列表
+//		va_start(ap, paramCnt);
+//		// 获取参数值
+//		DbFieldBinder binder;
+//		while(paramCnt > 0)
+//		{
+//			binder = va_arg(ap, DbFieldBinder);
+//			bindParamRel[binder.iType](*otl_stmt,binder);
+//			--paramCnt;
+//		}
+//		// 关闭参数列表
+//		va_end(ap);
+//
+//		if(bAutoFlush)
+//			otl_stmt->flush(); /// 刷新绑定变量缓冲区，使sql真正执行；
+//	}
+//	catch(otl_exception& e)
+//	{
+//		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
+//		{
+//			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+//		}
+//		throw;
+//	}
+//}
 
 void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {

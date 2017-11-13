@@ -27,6 +27,7 @@ public:
 	DbFieldBinder(char* value);
 	~DbFieldBinder();
 
+public:
 	_FIELD_TYPE iType;
 	_FIELD_VALUE fieldValue;
 };
