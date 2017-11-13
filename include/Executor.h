@@ -28,6 +28,7 @@ public:
 		const char *strErrCode;
 		const char *strErrRemark;
 	};
+
 	Executor(otl_connect *conn);
 	~Executor();
 
@@ -94,13 +95,18 @@ public:
 	 */
 	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL) ;
 
-
+	/**
+	 * 事物提交
+	 */
 	static void Commit(otl_connect *conn);
-
+	/**
+	 * 事物回退
+	 */
 	static void Rollback(otl_connect *conn);
 
-	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,... );
-
+	/**
+	 * 错误码转换
+	 */
 	static const char *Errno2String(_DBERROR err);
 private:
 	Executor(const Executor *exec);
