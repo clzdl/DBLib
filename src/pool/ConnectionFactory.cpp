@@ -6,19 +6,19 @@
  */
 
 
-#include "ConnectionFactory.h"
+#include "pool/ConnectionFactory.h"
 namespace DBLib{
 
 ConnectionFactory::ConnectionFactory(std::string connString)
 :m_connString(connString)
 {}
-ConnectionFactory::~ConnectionFactory(){
+ConnectionFactory::~ConnectionFactory()
+{
 
 }
 
 otl_connect* ConnectionFactory::create()
 {
-
 	otl_connect* conn = new otl_connect();
 	conn->rlogon(m_connString.c_str() , false);
 	return conn;

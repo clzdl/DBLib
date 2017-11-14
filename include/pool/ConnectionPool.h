@@ -8,7 +8,7 @@
 #ifndef INCLUDE_POOL_CONNECTIONPOOL_H_
 #define INCLUDE_POOL_CONNECTIONPOOL_H_
 
-#include <ConnectionFactory.h>
+#include <pool/ConnectionFactory.h>
 #include <vector>
 #include <mutex>              // std::mutex, std::unique_lock
 #include <condition_variable> // std::condition_variable

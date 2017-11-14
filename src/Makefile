@@ -7,10 +7,10 @@ U_TYPE =S
 MODULE = DBLib
 
 #目标文件集合(必填)
-U_OBJS =ConnectionFactory.cpp \
-	DbFieldBinder.cpp \
+U_OBJS =DbFieldBinder.cpp \
 	DbFieldResult.cpp \
 	Executor.cpp \
+	pool/ConnectionFactory.cpp \
 	pool/ConnectionPool.cpp
 
 
