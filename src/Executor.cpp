@@ -10,34 +10,17 @@
 
 namespace DBLib{
 
-
 //获取结果集的具体字段
-typedef _DBERROR (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
+typedef void (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
 
-
-
-#define _STRERROR_GEN(t1,t2,t3)        { t2, t3 },
-Executor::ErrInfoMap Executor::stErrInfoMap[] = {
-		_ERR_MAP(_STRERROR_GEN)
-};
-
-#undef _STRERROR_GEN
-
-
-const char* Executor::Errno2String(_DBERROR err)
-{
-    return stErrInfoMap[err].strErrRemark;
-}
-
-static _DBERROR AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	field->fieldValue.strValue = new char[desc.dbsize+1]();
 	field->iType = FIELD_STRING;
 	stmt>>field->fieldValue.strValue;
-	return E_OK;
 }
 
-static _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	if(isOriginal )
 	{  ///直接提取数据库原始值
@@ -60,11 +43,10 @@ static _DBERROR AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbFieldR
 	if(stmt.is_null() && field->iType == FIELD_DOUBLE)
 		field->fieldValue.dValue = 0.0;
 
-	return E_OK;
 }
 
 
-static _DBERROR AssField4Float( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4Float( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	if(isOriginal )
 	{   ///直接提取数据库原始值
@@ -87,29 +69,26 @@ static _DBERROR AssField4Float( otl_stream &stmt,otl_column_desc &desc,DbFieldRe
 	if(stmt.is_null() && field->iType == FIELD_FLOAT)
 		field->fieldValue.fValue = 0.0;
 
-	return E_OK;
 }
 
-static _DBERROR AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	field->iType = FIELD_INT;
 	stmt>>field->fieldValue.iValue;
 	if(stmt.is_null())
 		field->fieldValue.iValue = 0;
-	return E_OK;
 }
 
-static _DBERROR AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	field->iType = FIELD_LONG;
 	stmt>>field->fieldValue.lValue;
 	if(stmt.is_null())
 		field->fieldValue.lValue = 0;
-	return E_OK;
 }
 
 
-static _DBERROR AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
+static void AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	otl_datetime tmp;
 	stmt>>tmp;
@@ -124,8 +103,6 @@ static _DBERROR AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFie
 		field->fieldValue.strValue = new char[14+1]();
 		sprintf (field->fieldValue.strValue,"%04d%02d%02d%02d%02d%02d", tmp.year,tmp.month,tmp.day,tmp.hour,tmp.minute,tmp.second);
 	}
-
-	return E_OK;
 }
 
 std::map<int,AssFieldFunc> assFieldRel = {
@@ -140,34 +117,29 @@ std::map<int,AssFieldFunc> assFieldRel = {
 };
 
 
-static _DBERROR BindInteger(otl_stream &stmt ,DbFieldBinder &binder)
+static void BindInteger(otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.iValue;
-	return E_OK;
 }
 
-static _DBERROR BindLong( otl_stream &stmt ,DbFieldBinder &binder)
+static void BindLong( otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.lValue;
-	return E_OK;
 }
 
-static _DBERROR BindFloat( otl_stream &stmt ,DbFieldBinder &binder)
+static void BindFloat( otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.fValue;
-	return E_OK;
 }
 
-static _DBERROR BindDouble( otl_stream &stmt ,DbFieldBinder &binder)
+static void BindDouble( otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.dValue;
-	return E_OK;
 }
 
-static _DBERROR BindString( otl_stream &stmt ,DbFieldBinder &binder)
+static void BindString( otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.strValue;
-	return E_OK;
 }
 
 std::map<int , BindFunc>  Executor::bindParamRel = {
@@ -202,7 +174,7 @@ std::shared_ptr<otl_stream> Executor::Query(std::string sql  , int buffSize )
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 		throw;
 	}
@@ -235,7 +207,7 @@ void Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &res
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 		throw;
 	}
@@ -268,7 +240,7 @@ void Executor::FetchOrgData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 		throw;
 	}
@@ -288,7 +260,7 @@ std::shared_ptr<otl_stream> Executor::Execute(std::string sql  , int buffSize )
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 		throw;
 	}
@@ -310,43 +282,11 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 		throw;
 	}
 }
-//
-//void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt,... )
-//{
-//	try
-//	{
-//		// (1) 定义参数列表
-//		va_list ap;
-//		// (2) 初始化参数列表
-//		va_start(ap, paramCnt);
-//		// 获取参数值
-//		DbFieldBinder binder;
-//		while(paramCnt > 0)
-//		{
-//			binder = va_arg(ap, DbFieldBinder);
-//			bindParamRel[binder.iType](*otl_stmt,binder);
-//			--paramCnt;
-//		}
-//		// 关闭参数列表
-//		va_end(ap);
-//
-//		if(bAutoFlush)
-//			otl_stmt->flush(); /// 刷新绑定变量缓冲区，使sql真正执行；
-//	}
-//	catch(otl_exception& e)
-//	{
-//		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
-//		{
-//			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
-//		}
-//		throw;
-//	}
-//}
 void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec)
 {
 	try
@@ -361,7 +301,7 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 #ifndef OTL_ODBC
 		long rpc = 0;  ///成功执行记录数
@@ -373,8 +313,6 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 				////flush后重新计数
 				rpc=otl_stmt->get_rpc();
 				total_rpc += rpc;
-				_TRACE_MSG("TOTAL_RPC= %ld,RPC= %ld \n" ,total_rpc ,rpc);
-				////20150608
 				if(NULL != errVec)
 					errVec->push_back(total_rpc);   ////出错行位置号
 				//bypass the erro row and start
@@ -402,9 +340,9 @@ void Executor::Commit(otl_connect *conn)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 }
 
@@ -418,9 +356,9 @@ void Executor::Rollback(otl_connect *conn)
 	{
 		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 		{
-			THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
-		THROW_C_P3(DBSqlException , E_STMT_EXEC,Errno2String(E_STMT_EXEC),e.msg,e.stm_text,e.var_info);
+		throw;
 	}
 
 }

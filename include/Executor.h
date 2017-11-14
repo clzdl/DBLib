@@ -8,7 +8,6 @@
 #ifndef INCLUDE_EXECUTOR_H_
 #define INCLUDE_EXECUTOR_H_
 
-#include <ExceptionDef.h>
 #include "DbFieldResult.h"
 #include "DbFieldBinder.h"
 #include <string>
@@ -19,7 +18,7 @@ namespace DBLib{
 const int DEFAULT_BUFF_SIZE = 20;
 
 //绑定具体参数字段
-typedef _DBERROR (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
+typedef void (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
 class Executor
 {
 public:
@@ -59,12 +58,6 @@ public:
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &paramVec , bool bAutoFlush = true) ;
 
 
-	/**
-//	 * 变长绑定参数,
-//	 * 可变参数必须为 DbFieldBinder 类型
-//	 * g++4.9.4 报错， DbFieldBinder  non-trivially-copyable
-//	 */
-//	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,int paramCnt , ...);
 	template<typename T=DbFieldBinder, typename... Args>
 	void BindParam(std::shared_ptr<otl_stream> otl_stmt,bool bAutoFlush,T binder ,Args... args)
 	{
@@ -83,7 +76,7 @@ public:
 		{
 			if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
 			{
-				THROW_C(DBConnBreakException,E_DISCONNECT,Errno2String(E_DISCONNECT));
+				THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 			}
 			throw;
 		}
@@ -104,10 +97,6 @@ public:
 	 */
 	static void Rollback(otl_connect *conn);
 
-	/**
-	 * 错误码转换
-	 */
-	static const char *Errno2String(_DBERROR err);
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);
