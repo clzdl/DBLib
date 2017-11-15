@@ -93,9 +93,18 @@ public:
 	 */
 	static void Commit(otl_connect *conn);
 	/**
+	 * 事物提交
+	 */
+	void Commit();
+	/**
 	 * 事物回退
 	 */
 	static void Rollback(otl_connect *conn);
+
+	/**
+	 * 事物回退
+	 */
+	void Rollback();
 
 private:
 	Executor(const Executor *exec);

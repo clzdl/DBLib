@@ -362,6 +362,40 @@ void Executor::Rollback(otl_connect *conn)
 	}
 
 }
+
+
+void Executor::Commit()
+{
+	try
+	{
+		m_conn->commit();
+	}
+	catch(otl_exception& e)
+	{
+		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
+		{
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
+		}
+		throw;
+	}
+}
+
+void Executor::Rollback()
+{
+	try
+	{
+		m_conn->rollback();
+	}
+	catch(otl_exception& e)
+	{
+		if(e.code == ORA_PIPE_BREAK || e.code == ORA_DISCONNECT)
+		{
+			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
+		}
+		throw;
+	}
+
+}
 }
 
 
