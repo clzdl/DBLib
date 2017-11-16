@@ -54,6 +54,7 @@ public:
 	static void BuildBinder4Float(_BINDER_VEC &vecParams,float value);
 	static void BuildBinder4Double(_BINDER_VEC &vecParams,double value);
 	static void BuildBinder4String(_BINDER_VEC &vecParams,char* value);
+	static void BuildBinder4String(_BINDER_VEC &vecParams,std::string value);
 };
 
 
