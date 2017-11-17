@@ -106,6 +106,11 @@ public:
 	 */
 	void Rollback();
 
+	/**
+	 *
+	 */
+	otl_connect* GetConnection(){ return m_conn; }
+
 private:
 	Executor(const Executor *exec);
 	Executor& operator = (const Executor *exec);
