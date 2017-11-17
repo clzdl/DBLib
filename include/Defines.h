@@ -13,18 +13,14 @@ namespace DBLib{
 
 typedef enum
 {
-	FIELD_INT = 0,
 	FIELD_LONG,
-	FIELD_FLOAT,
 	FIELD_DOUBLE,
 	FIELD_STRING,
 }_FIELD_TYPE;
 
 typedef union
 {
-	int iValue;
 	long lValue;
-	float fValue;
 	double dValue;
 	char *strValue;
 } _FIELD_VALUE;

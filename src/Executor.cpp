@@ -46,39 +46,6 @@ static void AssField4Double( otl_stream &stmt,otl_column_desc &desc,DbFieldResul
 }
 
 
-static void AssField4Float( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
-{
-	if(isOriginal )
-	{   ///直接提取数据库原始值
-		field->iType = FIELD_FLOAT;
-		stmt>>field->fieldValue.fValue;
-	}
-	else
-	{
-		if(desc.scale == 0 )
-		{
-			field->iType = FIELD_INT;
-			stmt>>field->fieldValue.iValue;
-		}
-		else
-		{
-			field->iType = FIELD_FLOAT;
-			stmt>>field->fieldValue.fValue;
-		}
-	}
-	if(stmt.is_null() && field->iType == FIELD_FLOAT)
-		field->fieldValue.fValue = 0.0;
-
-}
-
-static void AssField4Int( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
-{
-	field->iType = FIELD_INT;
-	stmt>>field->fieldValue.iValue;
-	if(stmt.is_null())
-		field->fieldValue.iValue = 0;
-}
-
 static void AssField4Long( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
 	field->iType = FIELD_LONG;
@@ -107,29 +74,21 @@ static void AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFieldRe
 
 std::map<int,AssFieldFunc> assFieldRel = {
 		{otl_var_char,AssField4VarChar},
-		{otl_var_double,AssField4Double},
-		{otl_var_float,AssField4Float},
-		{otl_var_int,AssField4Int},
-		{otl_var_unsigned_int,AssField4Int},
-		{otl_var_short,AssField4Int},
+		{otl_var_char,AssField4VarChar},
+		{otl_var_bigint,AssField4Long},
+		{otl_var_short,AssField4Long},
+		{otl_var_unsigned_int,AssField4Long},
+		{otl_var_int,AssField4Long},
 		{otl_var_long_int,AssField4Long},
+		{otl_var_float,AssField4Double},
+		{otl_var_double,AssField4Double},
 		{otl_var_timestamp,AssField4Timestamp}
 };
 
 
-static void BindInteger(otl_stream &stmt ,DbFieldBinder &binder)
-{
-	stmt<<binder.fieldValue.iValue;
-}
-
 static void BindLong( otl_stream &stmt ,DbFieldBinder &binder)
 {
 	stmt<<binder.fieldValue.lValue;
-}
-
-static void BindFloat( otl_stream &stmt ,DbFieldBinder &binder)
-{
-	stmt<<binder.fieldValue.fValue;
 }
 
 static void BindDouble( otl_stream &stmt ,DbFieldBinder &binder)
@@ -143,9 +102,7 @@ static void BindString( otl_stream &stmt ,DbFieldBinder &binder)
 }
 
 std::map<int , BindFunc>  Executor::bindParamRel = {
-	{FIELD_INT, BindInteger},
 	{FIELD_LONG, BindLong},
-	{FIELD_FLOAT, BindFloat},
 	{FIELD_DOUBLE, BindDouble},
 	{FIELD_STRING, BindString}
 };

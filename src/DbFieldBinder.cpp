@@ -11,7 +11,7 @@
 namespace DBLib{
 
 DbFieldBinder::DbFieldBinder()
-:iType(FIELD_INT)
+:iType(FIELD_LONG)
 {
 
 }
@@ -63,23 +63,10 @@ void DbFieldBinderHelper::FreeMultipleParamVec( std::vector< std::vector<DbField
 		FreeSingleParamVec(*it);
 	}
 }
-
-void DbFieldBinderHelper::BuildBinder4Int(_BINDER_VEC &vecParams,int value)
-{
-	DbFieldBinder binder(DBLib::FIELD_INT);
-	binder.fieldValue.iValue = value;
-	vecParams.push_back(binder);
-}
 void DbFieldBinderHelper::BuildBinder4Long(_BINDER_VEC &vecParams,long value)
 {
 	DbFieldBinder binder(DBLib::FIELD_LONG);
 	binder.fieldValue.lValue = value;
-	vecParams.push_back(binder);
-}
-void DbFieldBinderHelper::BuildBinder4Float(_BINDER_VEC &vecParams,float value)
-{
-	DbFieldBinder binder(DBLib::FIELD_FLOAT);
-	binder.fieldValue.fValue = value;
 	vecParams.push_back(binder);
 }
 void DbFieldBinderHelper::BuildBinder4Double(_BINDER_VEC &vecParams,double value)
