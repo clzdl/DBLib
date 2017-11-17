@@ -86,7 +86,7 @@ public:
 	 * 批量绑定参数(update/delete)，若期间抛异常，则跳过出错行继续执行
 	 * errVec 接受出错行的行号
 	 */
-	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = NULL) ;
+	void BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_BINDER_VEC> &mutiParamVec ,std::vector<size_t> *errVec = nullptr) ;
 
 	/**
 	 * 事物提交

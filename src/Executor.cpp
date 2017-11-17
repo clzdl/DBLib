@@ -304,27 +304,34 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 			THROW(DBConnBreakException,ORA_BRK_EXP_MSG);
 		}
 #ifndef OTL_ODBC
-		long rpc = 0;  ///成功执行记录数
-		long total_rpc = 0;   ///总的执行数
-		bool bGoOn = false;
-		do{
-			try
-			{
-				////flush后重新计数
-				rpc=otl_stmt->get_rpc();
-				total_rpc += rpc;
-				if(NULL != errVec)
-					errVec->push_back(total_rpc);   ////出错行位置号
-				//bypass the erro row and start
-				total_rpc += 1;
-				otl_stmt->flush(total_rpc,true);
-				bGoOn = false;
-			}
-			catch(otl_exception& e1)
-			{
-					bGoOn = true;
-			}
-		}while(bGoOn);
+		if(nullptr == errVec)
+		{
+			throw;
+		}
+		else
+		{
+			long rpc = 0;  ///成功执行记录数
+			long total_rpc = 0;   ///总的执行数
+			bool bGoOn = false;
+			do{
+				try
+				{
+					////flush后重新计数
+					rpc=otl_stmt->get_rpc();
+					total_rpc += rpc;
+					if(NULL != errVec)
+						errVec->push_back(total_rpc);   ////出错行位置号
+					//bypass the erro row and start
+					total_rpc += 1;
+					otl_stmt->flush(total_rpc,true);
+					bGoOn = false;
+				}
+				catch(otl_exception& e1)
+				{
+						bGoOn = true;
+				}
+			}while(bGoOn);
+		}
 #endif
 	}
 
