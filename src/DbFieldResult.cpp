@@ -13,6 +13,7 @@
 namespace DBLib{
 
 DbFieldResult::DbFieldResult()
+:iType(DBLib::FIELD_LONG)
 {
 
 }

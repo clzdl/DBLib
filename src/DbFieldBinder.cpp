@@ -44,23 +44,23 @@ DbFieldBinder::~DbFieldBinder()
 
 void DbFieldBinderHelper::FreeSingleParamVec( std::vector<DbFieldBinder> &vec)
 {
-	for(auto it = vec.begin() ; it != vec.end(); ++it)
+	for(auto &it : vec)
 	{
-		if(it->iType == FIELD_STRING)
+		if(it.iType == FIELD_STRING)
 		{
-			if(NULL != it->fieldValue.strValue )
+			if(NULL != it.fieldValue.strValue )
 			{
-				delete [] it->fieldValue.strValue;
-				it->fieldValue.strValue = NULL;
+				delete [] it.fieldValue.strValue;
+				it.fieldValue.strValue = NULL;
 			}
 		}
 	}
 }
 void DbFieldBinderHelper::FreeMultipleParamVec( std::vector< std::vector<DbFieldBinder> > &vec)
 {
-	for(auto it = vec.begin() ; it != vec.end() ; ++it)
+	for(auto &it : vec)
 	{
-		FreeSingleParamVec(*it);
+		FreeSingleParamVec(it);
 	}
 }
 void DbFieldBinderHelper::BuildBinder4Long(_BINDER_VEC &vecParams,long value)

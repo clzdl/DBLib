@@ -229,8 +229,8 @@ void Executor::BindParam(std::shared_ptr<otl_stream> otl_stmt , _BINDER_VEC &par
 {
 	try
 	{
-		for(auto it= paramVec.begin(); it != paramVec.end(); ++it)
-			bindParamRel[it->iType](*otl_stmt,*it);
+		for(auto &it : paramVec)
+			bindParamRel[it.iType](*otl_stmt,it);
 
 		if(bAutoFlush)
 			otl_stmt->flush(); /// 刷新绑定变量缓冲区，使sql真正执行；
@@ -248,8 +248,8 @@ void Executor::BatBindParam(std::shared_ptr<otl_stream> otl_stmt , std::vector<_
 {
 	try
 	{
-		for(auto it  = mutiParamVec.begin() ;it != mutiParamVec.end(); ++it)
-			BindParam(otl_stmt , *it , false);
+		for(auto &it : mutiParamVec)
+			BindParam(otl_stmt , it , false);
 
 		///正常缓冲区满后自动刷新
 		otl_stmt->flush();/// 刷新绑定变量缓冲区，使sql真正执行；
