@@ -41,22 +41,24 @@ typedef std::vector<DbFieldBinder> _BINDER_VEC;
 class DbFieldBinderHelper
 {
 public:
-	/**
-	 *  释放动态分配的字符串数组
-	 */
-	static void FreeSingleParamVec( std::vector<DbFieldBinder> &vec);
-	/**
-	 *  释放动态分配的字符串数组
-	 */
-	static void FreeMultipleParamVec( std::vector< std::vector<DbFieldBinder> > &vec);
 
 	static void BuildBinder4Int(_BINDER_VEC &vecParams,int value);
 	static void BuildBinder4Long(_BINDER_VEC &vecParams,long value);
 	static void BuildBinder4Float(_BINDER_VEC &vecParams,float value);
 	static void BuildBinder4Double(_BINDER_VEC &vecParams,double value);
-	static void BuildBinder4String(_BINDER_VEC &vecParams,char* value);
+	/**
+	 *
+	 */
 	static void BuildBinder4String(_BINDER_VEC &vecParams,std::string &value);
 	static void BuildBinder4String(_BINDER_VEC &vecParams,const char* value);
+
+	/**
+	 * 动态申请字符串资源
+	 */
+	static void BuildDynamicBinder4String(_BINDER_VEC &vecParams,std::string value);
+	static void BuildDynamicBinder4String(_BINDER_VEC &vecParams,const char* value);
+	static void BuildDynamicBinderFree(_BINDER_VEC &vecParams);
+	static void BuildDynamicMutiBinderFree(std::vector<_BINDER_VEC> &vecParams);
 	static std::stringstream PrintBinderCache(_BINDER_VEC &vecParams);
 };
 
