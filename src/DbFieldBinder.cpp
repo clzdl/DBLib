@@ -87,5 +87,24 @@ void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,std::string 
 	BuildBinder4String(vecParams,const_cast<char*>(value.c_str()));
 }
 
+void DbFieldBinderHelper::PrintBinderCache(_BINDER_VEC &vecParams,std::ostringstream ss)
+{
+	for(DbFieldBinder binder : vecParams)
+	{
+		switch(binder.iType){
+		case FIELD_LONG:
+			ss<<binder.fieldValue.lValue;
+			break;
+		case FIELD_DOUBLE:
+			ss<<binder.fieldValue.dValue;
+			break;
+		case FIELD_STRING:
+			ss<<binder.fieldValue.strValue;
+			break;
+		}
+
+	}
+}
+
 }
 
