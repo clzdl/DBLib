@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include "Defines.h"
+#include <sstream>
 
 namespace DBLib{
 
@@ -55,7 +56,7 @@ public:
 	static void BuildBinder4Double(_BINDER_VEC &vecParams,double value);
 	static void BuildBinder4String(_BINDER_VEC &vecParams,char* value);
 	static void BuildBinder4String(_BINDER_VEC &vecParams,std::string value);
-	static void PrintBinderCache(_BINDER_VEC &vecParams,std::ostringstream ss);
+	static std::stringstream PrintBinderCache(_BINDER_VEC &vecParams);
 };
 
 
