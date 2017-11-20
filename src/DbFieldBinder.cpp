@@ -81,8 +81,13 @@ void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,char* value)
 	binder.fieldValue.strValue = value;
 	vecParams.push_back(binder);
 }
-
-void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,std::string value)
+static void BuildBinder4String(_BINDER_VEC &vecParams,const char* value)
+{
+	DbFieldBinder binder(DBLib::FIELD_STRING);
+	binder.fieldValue.strValue = const_cast<char*>(value);
+	vecParams.push_back(binder);
+}
+void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,std::string &value)
 {
 	BuildBinder4String(vecParams,const_cast<char*>(value.c_str()));
 }
