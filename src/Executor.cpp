@@ -152,9 +152,9 @@ void Executor::FetchData(std::shared_ptr<otl_stream> stmt , _RESULT_ROW_VEC &res
 			DbFieldResult *dbField = NULL;
 			for (int n = 0; n < desc_len;++n)
 			{
-				dbField = new DbFieldResult();
-				assFieldRel[desc[n].otl_var_dbtype](*stmt , desc[n] , dbField, false);
-				record.push_back(std::shared_ptr<DbFieldResult>(dbField));
+				std::shared_ptr<DbFieldResult> dbField = std::make_shared<DbFieldResult>();
+				assFieldRel[desc[n].otl_var_dbtype](*stmt , desc[n] , dbField.get(), false);
+				record.push_back(dbField);
 			}
 			result.push_back(record);
 			record.clear();
