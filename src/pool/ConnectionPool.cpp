@@ -59,14 +59,19 @@ ConnectionPool* ConnectionPool::GetInstance()
 
 otl_connect* ConnectionPool::GetConnection()
 {
-	otl_connect *conn = NULL;
+	otl_connect *conn = nullptr;
 	int reConnTime = 0;
 	std::unique_lock<std::mutex> lck(m_mutex);
 	do{
+
 		while(m_pool.empty())
 		{
+
 			if(m_uUsedCnt == m_uCnt)  ///池子已满
+			{
+				fprintf(stdout , "链接池已满，等待空闲链接.m_uUsedCnt:%d,m_uCnt%d\n",m_uUsedCnt,m_uCnt);
 				m_condition.wait(lck);
+			}
 			else
 			{
 				m_pool.push_back(m_connFactory->create());  ///创建新连接
