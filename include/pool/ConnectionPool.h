@@ -25,12 +25,7 @@ public:
 	/**
 	 * 初始化连接池
 	 */
-	static void Initialize(ConnectionFactory *factory,unsigned int maxSize = 2);
-
-	/**
-	 * 获取实例
-	 */
-	static ConnectionPool* GetInstance ();
+	static ConnectionPool* Create(ConnectionFactory *factory,unsigned int maxSize = 2);
 
 	/**
 	 * 获取连接
@@ -52,7 +47,6 @@ private:
 
 	void Initialize();
 
-	static ConnectionPool *instance;
 	ConnectionFactory *m_connFactory;
 	unsigned int m_uCnt;       //最大连接数
 	unsigned int m_uUsedCnt;   ///已使用的连接数
@@ -63,6 +57,7 @@ private:
 
 	static const int m_reConnTime = 3;    ///重连次数
 	static const int m_reConnDelayTime = 1;   ///重连延迟 单位秒
+	static const bool m_isInitilize = false;   //是否已初始化
 };
 
 

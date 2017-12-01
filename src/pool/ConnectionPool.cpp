@@ -12,8 +12,6 @@
 
 namespace DBLib{
 
-ConnectionPool* ConnectionPool::instance = NULL;
-
 static void RemoveConnection(otl_connect *conn)
 {
 	try
@@ -38,22 +36,16 @@ ConnectionPool::~ConnectionPool()
 {
 }
 
-void ConnectionPool::Initialize(ConnectionFactory *connFactory , unsigned int maxSize)
+ConnectionPool* ConnectionPool::Create(ConnectionFactory *factory,unsigned int maxSize)
 {
-	if(NULL == instance ){
+	if(!m_isInitilize)
+	{///进程启动初始，进行初始话，不考虑并行
 		otl_connect::otl_initialize(1);
-		instance = new ConnectionPool(connFactory,maxSize);
-		instance->Initialize();
 	}
-}
 
-ConnectionPool* ConnectionPool::GetInstance()
-{
-	if(NULL == instance){
-		fprintf(stdout , "please first invoke function Initialize\n");
-		return NULL;
-	}
-	return instance;
+	ConnectionPool *pool = new ConnectionPool(factory,maxSize);
+	pool->Initialize();
+	return pool;
 }
 
 
