@@ -25,8 +25,6 @@ typedef union
 	char *strValue;
 } _FIELD_VALUE;
 
-
-
 #define _DUMP_EXCEPTION(e)	fprintf(stderr,"msg:%s,stm_text:%s,var_info:%s\n",e.msg,e.stm_text,e.var_info)
 
 ///////oracle error

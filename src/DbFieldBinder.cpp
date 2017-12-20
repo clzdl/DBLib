@@ -39,7 +39,6 @@ DbFieldBinder::DbFieldBinder(char* value)
 
 DbFieldBinder::~DbFieldBinder()
 {
-
 }
 void DbFieldBinderHelper::BuildBinder4Long(_BINDER_VEC &vecParams,long value)
 {
@@ -59,6 +58,7 @@ void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,const char* 
 	binder.fieldValue.strValue = const_cast<char*>(value);
 	vecParams.push_back(binder);
 }
+
 void DbFieldBinderHelper::BuildBinder4String(_BINDER_VEC &vecParams,std::string &value)
 {
 	BuildBinder4String(vecParams,const_cast<char*>(value.c_str()));
@@ -101,7 +101,7 @@ void DbFieldBinderHelper::BuildDynamicMutiBinderFree(std::vector<_BINDER_VEC> &v
 std::stringstream DbFieldBinderHelper::PrintBinderCache(_BINDER_VEC &vecParams)
 {
 	std::stringstream ss;
-	for(DbFieldBinder binder : vecParams)
+	for(const DbFieldBinder &binder : vecParams)
 	{
 		switch(binder.iType){
 		case FIELD_LONG:
