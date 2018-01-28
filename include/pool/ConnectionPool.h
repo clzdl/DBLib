@@ -57,7 +57,7 @@ private:
 
 	static const int m_reConnTime = 3;    ///重连次数
 	static const int m_reConnDelayTime = 1;   ///重连延迟 单位秒
-	static const bool m_isInitilize = false;   //是否已初始化
+	static bool m_isInitilize;   //是否已初始化
 };
 
 

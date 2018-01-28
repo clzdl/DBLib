@@ -25,6 +25,7 @@ static void RemoveConnection(otl_connect *conn)
 	conn = NULL;
 }
 
+bool ConnectionPool::m_isInitilize = false;
 ConnectionPool::ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt)
 :m_connFactory(connFactory),
  m_uCnt(cnt),
@@ -41,6 +42,7 @@ ConnectionPool* ConnectionPool::Create(ConnectionFactory *factory,unsigned int m
 	if(!m_isInitilize)
 	{///进程启动初始，进行初始话，不考虑并行
 		otl_connect::otl_initialize(1);
+		m_isInitilize = true;
 	}
 
 	ConnectionPool *pool = new ConnectionPool(factory,maxSize);
