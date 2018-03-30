@@ -35,6 +35,10 @@ ConnectionPool::ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt)
 
 ConnectionPool::~ConnectionPool()
 {
+    for(auto it : m_pool)
+    {
+        RemoveConnection(it);
+    }
 }
 
 ConnectionPool* ConnectionPool::Create(ConnectionFactory *factory,unsigned int maxSize)

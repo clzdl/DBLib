@@ -10,8 +10,7 @@
 
 namespace DBLib{
 
-//获取结果集的具体字段
-typedef void (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
+
 
 static void AssField4VarChar(otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal)
 {
@@ -72,7 +71,7 @@ static void AssField4Timestamp( otl_stream &stmt,otl_column_desc &desc,DbFieldRe
 	}
 }
 
-std::map<int,AssFieldFunc> assFieldRel = {
+std::map<int,AssFieldFunc> Executor::assFieldRel = {
 		{otl_var_char,AssField4VarChar},
 		{otl_var_char,AssField4VarChar},
 		{otl_var_bigint,AssField4Long},

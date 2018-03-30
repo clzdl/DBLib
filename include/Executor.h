@@ -19,6 +19,8 @@ const int DEFAULT_BUFF_SIZE = 20;
 
 //绑定具体参数字段
 typedef void (*BindFunc)( otl_stream &stmt ,DbFieldBinder &field);
+//获取结果集的具体字段
+typedef void (*AssFieldFunc)( otl_stream &stmt,otl_column_desc &desc,DbFieldResult *field,bool isOriginal);
 class Executor
 {
 public:
@@ -117,8 +119,7 @@ private:
 	otl_connect *m_conn;
 
 	static std::map<int , BindFunc> bindParamRel;
-
-
+	static std::map<int,AssFieldFunc> assFieldRel;
 
 	static ErrInfoMap stErrInfoMap[];
 };

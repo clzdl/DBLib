@@ -22,6 +22,7 @@ namespace DBLib{
 
 class ConnectionPool{
 public:
+    ~ConnectionPool();
 	/**
 	 * 初始化连接池
 	 */
@@ -40,7 +41,6 @@ public:
 
 private:
 	ConnectionPool(ConnectionFactory *connFactory,unsigned int cnt);
-	~ConnectionPool();
 	ConnectionPool(const ConnectionPool &cp);
 
 	ConnectionPool& operator = (const ConnectionPool &cp);
